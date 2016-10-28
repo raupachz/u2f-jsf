@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:o="http://omnifaces.org/ui">
+
+    <h:head>
+        <meta charset="UTF-8" />
+        <title>U2F demo with JavaServer Faces</title>
+        <h:outputStylesheet name="css/normalize.css" />
+        <h:outputStylesheet name="css/style.css" />
+        <h:outputScript name="js/u2f-api.js" />
+    </h:head>
+    <h:body>
+        <p>Please touch your U2F token...</p>
+
+        <h:form id="register">
+            <h:inputHidden id="errorCode" value="#{register.errorCode}" />
+            <h:inputHidden id="registrationData" value="#{register.registrationData}" />
+            <h:inputHidden id="clientData" value="#{register.clientData}" />
+            <o:commandScript name="submitRegistration" action="#{register.submit}" execute="@form" />
+        </h:form>
+
+        <!-- we won't postback these -->
+        <h:inputHidden id="appId" value="#{register.appId}" />
+        <h:inputHidden id="version" value="#{register.version}" />
+        <h:inputHidden id="challenge" value="#{register.challenge}" />
+        <h:inputHidden id="registeredKeys" value="#{register.registeredKeys}" />
+
+        <script type="text/javascript">
+            //<![CDATA[
+            var appId = document.getElementById("appId").value;
+            var version = document.getElementById("version").value;
+            var challenge = document.getElementById("challenge").value;
+            var registeredKeys = document.getElementById("registeredKeys").value;
+
+            var request = [{
+                    "challenge": challenge,
+                    "version": version
+                }];
+
+            u2f.register(appId, request, JSON.parse(registeredKeys), function (response) {
+                document.getElementById("register:errorCode").value = response.errorCode || 0;
+                document.getElementById("register:clientData").value = response.clientData;
+                document.getElementById("register:registrationData").value = response.registrationData;
+                submitRegistration();
+            });
+
+            //]]>
+        </script>
+
+    </h:body>
+</html>

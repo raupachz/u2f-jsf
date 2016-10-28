@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta charset="UTF-8" />
+        <title>U2F demo with JavaServer Faces</title>
+        <h:outputStylesheet name="css/normalize.css" />
+        <h:outputStylesheet name="css/style.css" />
+    </h:head>
+    <h:body>
+        
+        <nav class="nav">
+            <h:link outcome="register">Register U2F token</h:link>
+            <h:link outcome="authenticate">Authenticate</h:link>
+        </nav>
+        
+        <h:messages />
+        
+        <h:dataTable styleClass="registeredKeys" value="#{index.entries}" var="entry" rendered="#{not empty index.entries}">
+            <f:facet name="caption">registered keys</f:facet>
+            
+            <h:column>
+                <f:facet name="header">version</f:facet>
+                <h:outputText value="#{entry.version}" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">key handle</f:facet>
+                <h:outputText value="#{entry.keyHandle}" converter="ByteArrayConverter" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">public key</f:facet>
+                <h:outputText styleClass="monospace" value="#{entry.publicKey}" converter="ByteArrayConverter" />
+            </h:column>
+        
+        </h:dataTable>
+        
+    </h:body>
+</html>

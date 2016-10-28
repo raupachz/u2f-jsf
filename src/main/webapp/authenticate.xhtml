@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:o="http://omnifaces.org/ui">
+
+    <h:head>
+        <meta charset="UTF-8" />
+        <title>U2F demo with JavaServer Faces</title>
+        <h:outputStylesheet name="css/normalize.css" />
+        <h:outputStylesheet name="css/style.css" />
+        <h:outputScript name="js/u2f-api.js" />
+    </h:head>
+    <h:body>
+        <p>Please touch your U2F device</p>
+        
+        <h:form id="authenticate">
+            <h:inputHidden id="errorCode" value="#{authenticate.errorCode}" />
+            <h:inputHidden id="keyHandle" value="#{authenticate.keyHandle}" />
+            <h:inputHidden id="authenticationData" value="#{authenticate.authenticationData}" />
+            <h:inputHidden id="clientData" value="#{authenticate.clientData}" />
+            <o:commandScript name="submitAuthentication" action="#{authenticate.submit}" execute="@form" />
+        </h:form>
+
+        <!-- we won't postback these -->
+        <h:inputHidden id="appId" value="#{authenticate.appId}" />
+        <h:inputHidden id="challenge" value="#{authenticate.challenge}" />
+        <h:inputHidden id="registeredKeys" value="#{authenticate.registeredKeys}" />
+        
+        
+        <script type="text/javascript">
+            //<![CDATA[
+            var appId = document.getElementById("appId").value;
+            var challenge = document.getElementById("challenge").value;
+            var registeredKeys = document.getElementById("registeredKeys").value;
+
+            
+            u2f.sign(appId, challenge, JSON.parse(registeredKeys), function (response) {
+                document.getElementById("authenticate:errorCode").value = response.errorCode || 0;
+                document.getElementById("authenticate:keyHandle").value = response.keyHandle;
+                document.getElementById("authenticate:clientData").value = response.clientData;
+                document.getElementById("authenticate:authenticationData").value = response.signatureData;
+                submitAuthentication();
+            });
+
+            //]]>
+        </script>
+    </h:body>
+</html>

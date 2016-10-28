@@ -1,0 +1,15 @@
+.nav {
+    padding: 15px;
+}
+
+.nav a {
+    margin-left: 15px;
+}
+
+.registeredKeys {
+    font-family: monospace;
+    color: #333;
+}
+
+
+
