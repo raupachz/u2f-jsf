@@ -12,18 +12,18 @@ Firefox (with an add-on).
 
 Reference implementations
 -------------------------
-https://github.com/google/u2f-ref-code
-https://github.com/Yubico/java-u2flib-server
+* https://github.com/google/u2f-ref-code
+* https://github.com/Yubico/java-u2flib-server
 
 Links
 -----
-https://fidoalliance.org/
-https://developer.mozilla.org/en-US/docs/Archive/Security/Introduction_to_Public-Key_Cryptography
-http://www.howtogeek.com/232314/u2f-explained-how-google-microsoft-and-others-are-creating-universal-two-factor-authentication-tokens/
-https://addons.mozilla.org/en-US/firefox/addon/u2f-support-add-on/
+* https://fidoalliance.org/
+* https://developer.mozilla.org/en-US/docs/Archive/Security/Introduction_to_Public-Key_Cryptography
+* http://www.howtogeek.com/232314/u2f-explained-how-google-microsoft-and-others-are-creating-universal-two-factor-authentication-tokens/
+* https://addons.mozilla.org/en-US/firefox/addon/u2f-support-add-on/
 
 Videos
 ------
-https://air.mozilla.org/fido-u2f/
+* https://air.mozilla.org/fido-u2f/
 
 
