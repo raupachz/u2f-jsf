@@ -58,6 +58,7 @@ public class ClientData {
     public static ClientData of(String src) {
         requireNonNull(src, "src");
 
+        // decode Base64 into bytes
         String json
                 = new String(
                         Base64.getUrlDecoder().decode(src),

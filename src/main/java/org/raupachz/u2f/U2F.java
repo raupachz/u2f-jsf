@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.raupachz.service;
+package org.raupachz.u2f;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -94,9 +94,4 @@ public class U2F implements Serializable {
         
         return writer.toString();
     }
-    
-    public <T> T parse(String s, Class<T> clazz) {
-        return null;
-    }
-    
 }

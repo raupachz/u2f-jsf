@@ -32,7 +32,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.omnifaces.util.Messages;
 import org.raupachz.data.Storage;
-import org.raupachz.service.U2F;
+import org.raupachz.u2f.U2F;
 import org.raupachz.u2f.AuthenticationData;
 import org.raupachz.u2f.ClientData;
 import org.raupachz.u2f.RegisteredKey;
