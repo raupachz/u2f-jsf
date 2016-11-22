@@ -31,7 +31,6 @@ import java.util.Base64;
 import static java.util.Objects.requireNonNull;
 import javax.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Registration Response Message: Success
@@ -164,7 +163,7 @@ public class RegistrationData {
             System.arraycopy(keyHandle, 0, raw, 65, keyHandle.length);
             System.arraycopy(publicKey, 0, raw, 65 + keyHandle.length, publicKey.length);
 
-            Signature ecdsaVerify = Signature.getInstance("SHA256withECDSA", new BouncyCastleProvider());
+            Signature ecdsaVerify = Signature.getInstance("SHA256withECDSA");
             ecdsaVerify.initVerify(getCertificate().getPublicKey());
             ecdsaVerify.update(raw);
 

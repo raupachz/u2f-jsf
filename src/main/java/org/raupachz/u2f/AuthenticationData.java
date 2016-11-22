@@ -32,15 +32,10 @@ import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.ECPublicKeySpec;
 import java.security.spec.EllipticCurve;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 import static java.util.Objects.requireNonNull;
-import org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util;
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.ECPointUtil;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
-import org.bouncycastle.math.ec.ECCurve;
 
 /**
  * Authentication Response Message: Success
@@ -98,21 +93,21 @@ public class AuthenticationData {
         return new AuthenticationData(userPresence, counter, signature);
     }
     
-    public boolean verify(String clientData, String appId, byte[] publicKey) {
+    public boolean verify(String clientData, String appId, byte[] encodedKey) {
         boolean verify = false;
 
         try {
-            ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec("P-256");
-            ECCurve curve = spec.getCurve();
+            // X509 prefix
+            final String X509Prefix = "3059301306072A8648CE3D020106082A8648CE3D030107034200";
+            byte[] prefix =  javax.xml.bind.DatatypeConverter.parseHexBinary(X509Prefix);
             
-            EllipticCurve ellipticCurve = EC5Util.convertCurve(curve, spec.getSeed());
-            ECPoint ecPoint = ECPointUtil.decodePoint(ellipticCurve, publicKey);
-            ECParameterSpec ecParameterSpec = EC5Util.convertSpec(ellipticCurve, spec);
+            byte[] key = new byte[prefix.length + encodedKey.length];
+            System.arraycopy(prefix, 0, key, 0, prefix.length);
+            System.arraycopy(encodedKey, 0, key, prefix.length, encodedKey.length);
             
-            
-            ECPublicKeySpec publicKeySpec = new ECPublicKeySpec(ecPoint, ecParameterSpec);
-            KeyFactory kf = KeyFactory.getInstance("EC");
-            PublicKey _publicKey = kf.generatePublic(publicKeySpec);
+            X509EncodedKeySpec ks = new X509EncodedKeySpec(key);
+            KeyFactory kf = java.security.KeyFactory.getInstance("EC");
+            PublicKey publicKey =  kf.generatePublic(ks);
             
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
@@ -137,8 +132,8 @@ public class AuthenticationData {
             // challenge data
             System.arraycopy(challengeParameter, 0, raw, 37, challengeParameter.length);
             
-            Signature ecdsaVerify = Signature.getInstance("SHA256withECDSA", new BouncyCastleProvider());
-            ecdsaVerify.initVerify(_publicKey);
+            Signature ecdsaVerify = Signature.getInstance("SHA256withECDSA");
+            ecdsaVerify.initVerify(publicKey);
             ecdsaVerify.update(raw);
 
             verify = ecdsaVerify.verify(signature);

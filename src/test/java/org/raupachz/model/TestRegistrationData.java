@@ -25,7 +25,6 @@ package org.raupachz.model;
 
 import java.security.Security;
 import javax.security.cert.CertificateException;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.raupachz.u2f.RegistrationData;
@@ -35,7 +34,6 @@ public class TestRegistrationData {
     
     @BeforeClass
     public static void bootstrap() {
-        Security.addProvider(new BouncyCastleProvider());
     }
     
     @Ignore
