@@ -155,19 +155,13 @@ public class RegistrationData {
             md.update(appId.getBytes(StandardCharsets.UTF_8));
             byte[] applicationParameter = md.digest();
 
-            // verify this
-            byte[] raw = new byte[1 + 32 + 32 + keyHandleLength + 65];
-            raw[0] = 0;
-            System.arraycopy(applicationParameter, 0, raw, 1, applicationParameter.length);
-            System.arraycopy(challengeParameter, 0, raw, 33, challengeParameter.length);
-            System.arraycopy(keyHandle, 0, raw, 65, keyHandle.length);
-            System.arraycopy(publicKey, 0, raw, 65 + keyHandle.length, publicKey.length);
+            byte[] raw = Bytes.concat(new byte[] { 0x00 }, applicationParameter, challengeParameter, keyHandle, publicKey);
 
-            Signature ecdsaVerify = Signature.getInstance("SHA256withECDSA");
-            ecdsaVerify.initVerify(getCertificate().getPublicKey());
-            ecdsaVerify.update(raw);
-
-            verify = ecdsaVerify.verify(signature);
+            Signature sig = Signature.getInstance("SHA256withECDSA");
+            sig.initVerify(getCertificate().getPublicKey());
+            sig.update(raw);
+            
+            verify = sig.verify(signature);
 
         } catch (Exception e) {
             throw new RuntimeException(e);

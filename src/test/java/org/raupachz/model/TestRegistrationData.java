@@ -23,12 +23,11 @@
  */
 package org.raupachz.model;
 
-import java.security.Security;
 import javax.security.cert.CertificateException;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.raupachz.u2f.RegistrationData;
 import org.junit.Test;
+import org.raupachz.u2f.RegistrationData;
 
 public class TestRegistrationData {
     

@@ -42,11 +42,11 @@ public class Storage implements Serializable {
     }
     
     public void put(String version, byte[] keyHandle, byte[] publicKey) {
-        System.out.println(java.util.Base64.getEncoder()
-                .encodeToString(keyHandle));
-        
-        System.out.println(java.util.Base64.getEncoder()
-                .encodeToString(publicKey));
+//        System.out.println(java.util.Base64.getEncoder()
+//                .encodeToString(keyHandle));
+//        
+//        System.out.println(java.util.Base64.getEncoder()
+//                .encodeToString(publicKey));
         
         
         RegisteredKey entry = new RegisteredKey(version, keyHandle, publicKey);

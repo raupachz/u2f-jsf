@@ -34,7 +34,6 @@ import java.util.Iterator;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import org.raupachz.data.Storage;
-import org.raupachz.u2f.RegisteredKey;
 
 @ApplicationScoped
 public class U2F implements Serializable {

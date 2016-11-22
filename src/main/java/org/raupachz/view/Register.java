@@ -23,7 +23,6 @@
  */
 package org.raupachz.view;
 
-import org.raupachz.data.Storage;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import javax.annotation.PostConstruct;
@@ -31,9 +30,10 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.omnifaces.util.Messages;
-import org.raupachz.u2f.U2F;
+import org.raupachz.data.Storage;
 import org.raupachz.u2f.ClientData;
 import org.raupachz.u2f.RegistrationData;
+import org.raupachz.u2f.U2F;
 
 @Named
 @ViewScoped

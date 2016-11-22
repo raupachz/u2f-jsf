@@ -21,36 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.raupachz.model;
+package org.raupachz.u2f;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.raupachz.u2f.ClientData;
+import static org.junit.Assert.*;
 
-public class TestClientData {
+public class TestBytes {
     
     @Test(expected = NullPointerException.class)
-    public void of_null() {
-        ClientData.of(null);
-    }
-    
-    @Test(expected = IllegalArgumentException.class)
-    public void of_empty() {
-        ClientData.of("");
-    }
-    
-    @Test(expected = IllegalArgumentException.class)
-    public void of_invalid() {
-        ClientData.of("ABCDEFGH");
+    public void test_null() {
+        Bytes.concat(null);
     }
     
     @Test
-    public void of() {
-        String src = "eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6ImxGVk5Oc2pLQ0R4Ri1LQ1lQZzFJQ0FKLWF0YlYxLTUxaWpYc0UwamNEOTh1UE5lT3Bib2F2NTQyTnVvU3J1eEdfTDlZRG9aaC1CZm04d2dVUEpabVUwMWRNeUxTTmVEVWZfdFZYdUJjUS1fTzdJeW5qNW80UUExMU9XbVo2cGN5RmFXSm1KSURLcWlqQ0dLVkJ4ZWRSYVJrSHNZSmg0MGxwQk9vQTBjcjdxTSIsIm9yaWdpbiI6Imh0dHBzOi8vbG9jYWxob3N0Ojg0NDMiLCJjaWRfcHVia2V5IjoidW51c2VkIn0";
-        ClientData data = ClientData.of(src);
-        assertEquals("navigator.id.finishEnrollment", data.getTyp());
-        assertEquals("https://localhost:8443", data.getOrigin());
-        assertEquals("lFVNNsjKCDxF-KCYPg1ICAJ-atbV1-51ijXsE0jcD98uPNeOpboav542NuoSruxG_L9YDoZh-Bfm8wgUPJZmU01dMyLSNeDUf_tVXuBcQ-_O7Iynj5o4QA11OWmZ6pcyFaWJmJIDKqijCGKVBxedRaRkHsYJh40lpBOoA0cr7qM", data.getChallenge());
+    public void test_oneArg() {
+        byte[] expected = new byte[] { 0x0a };
+        byte[] actual = Bytes.concat(expected);
+        assertArrayEquals(expected, actual);
+    }
+    
+    @Test
+    public void test_twoArgs() {
+        byte[] a = new byte[] { 0x0a };
+        byte[] b = new byte[] { 0x0b, 0x0c };
+        
+        byte[] actual = Bytes.concat(a, b);
+        byte[] expected = new byte[] { 0x0a, 0x0b, 0x0c };
+        assertArrayEquals(expected, actual);
+    }
+    
+    @Test
+    public void test_threeArgs() {
+        byte[] a = new byte[] { 0x0a };
+        byte[] b = new byte[] { 0x0b, 0x0c };
+        byte[] c = new byte[] { 0x0d };
+        
+        byte[] actual = Bytes.concat(a, b, c);
+        byte[] expected = new byte[] { 0x0a, 0x0b, 0x0c, 0x0d };
+        assertArrayEquals(expected, actual);
     }
     
 }

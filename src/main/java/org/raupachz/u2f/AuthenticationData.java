@@ -28,10 +28,6 @@ import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.Signature;
-import java.security.spec.ECParameterSpec;
-import java.security.spec.ECPoint;
-import java.security.spec.ECPublicKeySpec;
-import java.security.spec.EllipticCurve;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
@@ -98,9 +94,6 @@ public class AuthenticationData {
         boolean verify = false;
 
         try {
-            // Digital signatures to verify
-            byte[] raw = new byte[32 + 1 + 4 + 32];
-            
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
             // Hash the challenge
@@ -113,24 +106,13 @@ public class AuthenticationData {
             md.update(appId.getBytes(StandardCharsets.UTF_8));
             byte[] applicationParameter = md.digest();
             
-            // application
-            System.arraycopy(applicationParameter, 0, raw, 0, applicationParameter.length);
-            raw[32] = userPresence;
-            // 4 bytes counter
-            raw[33] = (byte)(counter >>> 24);
-            raw[34] = (byte)(counter >>> 16);
-            raw[35] = (byte)(counter >>> 8);
-            raw[36] = (byte)(counter);
-            // challenge data
-            System.arraycopy(challengeParameter, 0, raw, 37, challengeParameter.length);
+            // Digital signatures to verify
+            byte[] raw = Bytes.concat(applicationParameter, new byte[] {userPresence}, Bytes.itob(counter), challengeParameter);
             
             // Make public key X509 compatible
             final String X509Prefix = "3059301306072A8648CE3D020106082A8648CE3D030107034200";
             byte[] prefix = DatatypeConverter.parseHexBinary(X509Prefix);
-            
-            byte[] key = new byte[prefix.length + encodedKey.length];
-            System.arraycopy(prefix, 0, key, 0, prefix.length);
-            System.arraycopy(encodedKey, 0, key, prefix.length, encodedKey.length);
+            byte[] key = Bytes.concat(prefix, encodedKey);
             
             X509EncodedKeySpec ks = new X509EncodedKeySpec(key);
             KeyFactory kf = java.security.KeyFactory.getInstance("EC");
