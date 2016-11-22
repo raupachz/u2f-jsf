@@ -36,6 +36,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 import static java.util.Objects.requireNonNull;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * Authentication Response Message: Success
@@ -97,9 +98,35 @@ public class AuthenticationData {
         boolean verify = false;
 
         try {
-            // X509 prefix
+            // Digital signatures to verify
+            byte[] raw = new byte[32 + 1 + 4 + 32];
+            
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            // Hash the challenge
+            md.update(clientData.getBytes(StandardCharsets.UTF_8));
+            byte[] challengeParameter = md.digest();
+
+            md.reset();
+            
+            // Hash the appId
+            md.update(appId.getBytes(StandardCharsets.UTF_8));
+            byte[] applicationParameter = md.digest();
+            
+            // application
+            System.arraycopy(applicationParameter, 0, raw, 0, applicationParameter.length);
+            raw[32] = userPresence;
+            // 4 bytes counter
+            raw[33] = (byte)(counter >>> 24);
+            raw[34] = (byte)(counter >>> 16);
+            raw[35] = (byte)(counter >>> 8);
+            raw[36] = (byte)(counter);
+            // challenge data
+            System.arraycopy(challengeParameter, 0, raw, 37, challengeParameter.length);
+            
+            // Make public key X509 compatible
             final String X509Prefix = "3059301306072A8648CE3D020106082A8648CE3D030107034200";
-            byte[] prefix =  javax.xml.bind.DatatypeConverter.parseHexBinary(X509Prefix);
+            byte[] prefix = DatatypeConverter.parseHexBinary(X509Prefix);
             
             byte[] key = new byte[prefix.length + encodedKey.length];
             System.arraycopy(prefix, 0, key, 0, prefix.length);
@@ -109,34 +136,12 @@ public class AuthenticationData {
             KeyFactory kf = java.security.KeyFactory.getInstance("EC");
             PublicKey publicKey =  kf.generatePublic(ks);
             
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            // Verify signature
+            Signature sig = Signature.getInstance("SHA256withECDSA");
+            sig.initVerify(publicKey);
+            sig.update(raw);
 
-            md.update(clientData.getBytes(StandardCharsets.UTF_8));
-            byte[] challengeParameter = md.digest();
-
-            md.reset();
-            
-            md.update(appId.getBytes(StandardCharsets.UTF_8));
-            byte[] applicationParameter = md.digest();
-
-            // verify this
-            byte[] raw = new byte[32 + 1 + 4 + 32];
-            System.arraycopy(applicationParameter, 0, raw, 0, applicationParameter.length);
-            raw[32] = userPresence;
-            // 4 bytes counter
-            raw[33] = (byte)(counter >>> 24);
-            raw[34] = (byte)(counter >>> 16);
-            raw[35] = (byte)(counter >>> 8);
-            raw[36] = (byte)(counter);
-            
-            // challenge data
-            System.arraycopy(challengeParameter, 0, raw, 37, challengeParameter.length);
-            
-            Signature ecdsaVerify = Signature.getInstance("SHA256withECDSA");
-            ecdsaVerify.initVerify(publicKey);
-            ecdsaVerify.update(raw);
-
-            verify = ecdsaVerify.verify(signature);
+            verify = sig.verify(signature);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
